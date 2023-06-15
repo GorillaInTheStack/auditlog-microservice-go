@@ -9,7 +9,8 @@ import (
 	"auditlog/config"
 )
 
-// AuthHandler is a middleware for authenticating requests
+// The AuthHandler function checks for a valid authentication token in the request header before
+// allowing access to the next handler function.
 func AuthHandler(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 

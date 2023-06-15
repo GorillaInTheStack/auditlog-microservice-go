@@ -9,7 +9,8 @@ import (
 	"auditlog/services"
 )
 
-// QueryEventHandler handles the event query endpoint
+// This function retrieves events based on query parameters, stores unique events in a map, converts
+// the map to a slice, encodes the events as JSON, and sends the JSON response.
 func QueryEventHandler(w http.ResponseWriter, r *http.Request) {
 	// Parse the query parameters
 	queryParams := r.URL.Query()

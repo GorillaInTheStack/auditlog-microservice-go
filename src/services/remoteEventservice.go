@@ -7,7 +7,6 @@ import (
 )
 
 type RemoteService struct {
-	// Implement fields specific to remote storage, if any
 }
 
 func (r *RemoteService) SaveEvent(event models.Event) error {

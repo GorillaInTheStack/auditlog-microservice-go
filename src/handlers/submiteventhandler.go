@@ -12,7 +12,8 @@ import (
 	"github.com/google/uuid"
 )
 
-// SubmitEventHandler handles the event submission endpoint
+// This function handles the submission of an event, decodes the event data, saves the event, and logs
+// any errors or successful saves.
 func SubmitEventHandler(w http.ResponseWriter, r *http.Request) {
 
 	decoder := json.NewDecoder(r.Body)

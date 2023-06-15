@@ -9,14 +9,13 @@ import (
 	"auditlog/config"
 )
 
-// generateToken generates a new JWT token
+// This function generates a JWT token with a specified expiry time and additional claims if needed.
 func GenerateTokenHandler(w http.ResponseWriter, r *http.Request) {
 	token := jwt.New(jwt.SigningMethodHS256)
 
 	// Set the claims
 	claims := token.Claims.(jwt.MapClaims)
 	claims["exp"] = time.Now().Add(time.Hour * 24).Unix() // Token expiry time
-	// Add additional claims if needed
 
 	// Generate the token string
 	tokenString, err := token.SignedString(config.SecretKey)

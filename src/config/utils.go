@@ -14,7 +14,8 @@ var (
 	IsClustered bool
 )
 
-// Set default value if not provided
+// This function initializes and loads configuration variables from environment variables in a Go
+// application.
 func init() {
 
 	secretKeyEnv := os.Getenv("JWT_SECRET")

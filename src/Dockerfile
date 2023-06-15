@@ -7,7 +7,7 @@ WORKDIR /app
 # Copy the Go mod and sum files to the working directory
 COPY go.mod go.sum ./
 
-# Download and cache Go modules
+# Download and cache Go modules then tidy them
 RUN go clean -modcache
 RUN go mod download
 RUN go mod tidy
@@ -15,9 +15,9 @@ RUN go mod tidy
 # Copy the source code from the current directory to the working directory inside the container
 COPY . .
 
-# Build the Go application
+# Build microservice
 RUN go build -o auditlog
 
 
-# Set the entry point command for the container
+# Start microservice
 CMD ["./auditlog"]

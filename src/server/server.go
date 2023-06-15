@@ -9,6 +9,7 @@ import (
 	"auditlog/handlers"
 )
 
+// This function starts an HTTP server and sets up handlers for different endpoints.
 func Start() {
 	http.HandleFunc("/generatetoken", handlers.GenerateTokenHandler)
 	http.HandleFunc("/events/submit", auth.AuthHandler(handlers.SubmitEventHandler))

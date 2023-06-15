@@ -16,11 +16,13 @@ func init() {
 	}
 }
 
+// This function saves an event using an event service and returns an error if there is one.
 func SaveEvent(event models.Event) error {
 	err := eventService.SaveEvent(event)
 	return err
 }
 
+// The function retrieves events based on a given key-value pair.
 func GetEventsByKeyValue(key string, value interface{}) ([]models.Event, error) {
 	event, err := eventService.GetEvents(key, value)
 

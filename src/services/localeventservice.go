@@ -7,7 +7,6 @@ import (
 )
 
 type LocalService struct {
-	// Implement fields specific to local storage, if any
 }
 
 func (l *LocalService) SaveEvent(event models.Event) error {

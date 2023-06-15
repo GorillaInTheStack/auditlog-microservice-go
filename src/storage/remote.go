@@ -18,6 +18,7 @@ var (
 	collection *mongo.Collection
 )
 
+// The function establishes a MongoDB connection and sets the collection for audit log events.
 func init() {
 	// Establish MongoDB connection
 	if config.IsClustered {
@@ -46,6 +47,7 @@ func init() {
 	}
 }
 
+// The function inserts a document into a MongoDB collection.
 func InsertDoc(doc models.Event) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -66,29 +68,13 @@ func InsertDoc(doc models.Event) error {
 	return nil
 }
 
+// The function retrieves documents from a MongoDB collection based on a given filter and returns them
+// as a slice of models.Event structs.
 func FindDoc(filter map[string]interface{}) ([]models.Event, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	log.Printf("Storage: Received request to retrieve document with filter: %v\n", filter)
-	// We know filter is always map, otherwise use reflection.
-
-	/*
-		filterMap, ok := filter.(map[string]interface{})
-
-		if !ok {
-			err := fmt.Errorf("invalid filter type, expected map[string]interface{}")
-			log.Println("Storage: Failed to process filter:", err)
-			return nil, err
-		}
-
-		// Prepare for BSON request
-		bsonFilter := make(map[string]interface{})
-		for key, value := range filterMap {
-			lowercaseKey := strings.ToLower(key)
-			bsonFilter[lowercaseKey] = value
-		}
-	*/
 
 	cursor, err := collection.Find(ctx, filter)
 	if err != nil {
@@ -112,6 +98,8 @@ func FindDoc(filter map[string]interface{}) ([]models.Event, error) {
 	return results, nil
 }
 
+// The function deletes a document from a collection in a MongoDB database based on a given filter.
+// TODO: not used yet
 func DeleteDoc(filter map[string]interface{}) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -126,6 +114,8 @@ func DeleteDoc(filter map[string]interface{}) error {
 	return nil
 }
 
+// The function updates a document in a collection using a filter and an update object.
+// TODO: not used yet
 func UpdateDoc(filter map[string]interface{}, update models.Event) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
