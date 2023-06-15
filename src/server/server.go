@@ -4,9 +4,9 @@ import (
 	"log"
 	"net/http"
 
+	"auditlog/api/handlers"
 	"auditlog/auth"
 	"auditlog/config"
-	"auditlog/handlers"
 )
 
 // This function starts an HTTP server and sets up handlers for different endpoints.
