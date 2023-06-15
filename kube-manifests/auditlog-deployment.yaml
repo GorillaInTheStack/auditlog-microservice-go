@@ -127,6 +127,6 @@ metadata:
   namespace: demo
 type: Opaque
 data:
-  MONGO_INITDB_ROOT_USERNAME: YWRtaW4=  # admin
+  MONGO_INITDB_ROOT_USERNAME: YWRtaW4=  # admin TODO: values for tests only
   MONGO_INITDB_ROOT_PASSWORD: cGFzc3dvcmQ=  #- password
 
