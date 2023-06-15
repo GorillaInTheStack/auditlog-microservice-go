@@ -1,0 +1,132 @@
+# Create demo namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: demo
+---
+# Auditlog app deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auditlog-deployment
+  namespace: demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auditlog
+  template:
+    metadata:
+      labels:
+        app: auditlog
+    spec:
+      containers:
+      - name: auditlog
+        image: localhost:5000/auditlog:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 6969
+        env:
+        - name: ADDRESS
+          value: "localhost:6969"
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: jwt-secret
+              key: jwt-secret-key
+        - name: MONGO_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-secret
+              key: MONGO_INITDB_ROOT_USERNAME
+        - name: MONGO_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-secret
+              key: MONGO_INITDB_ROOT_PASSWORD
+        - name: IS_CLUSTERED
+          value: "true"
+        - name: MONGO_SERVICE
+          value: "mongodb-service.demo:27017"
+---
+# Create secret for auditlog JWT
+apiVersion: v1
+kind: Secret
+metadata:
+  name: jwt-secret
+  namespace: demo
+type: Opaque
+data:
+  jwt-secret-key: dGVzdAo=
+---
+# MongoDB StatefulSet
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongodb-statefulset
+  namespace: demo
+spec:
+  serviceName: mongodb-service
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+        - name: mongodb
+          image: mongo:4.4
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - name: mongodb-data
+              mountPath: /data/db
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-secret
+                  key: MONGO_INITDB_ROOT_USERNAME
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-secret
+                  key: MONGO_INITDB_ROOT_PASSWORD
+  volumeClaimTemplates:
+    - metadata:
+        name: mongodb-data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 1Gi
+---
+# MongoDB Headless Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-service
+  namespace: demo
+spec:
+  selector:
+    app: mongodb
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017
+  clusterIP: None
+---
+# Secret for db user
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mongodb-secret
+  namespace: demo
+type: Opaque
+data:
+  MONGO_INITDB_ROOT_USERNAME: YWRtaW4=  # admin
+  MONGO_INITDB_ROOT_PASSWORD: cGFzc3dvcmQ=  #- password
+
