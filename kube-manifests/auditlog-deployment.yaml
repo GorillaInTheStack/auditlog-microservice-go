@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
       - name: auditlog
-        image: localhost:5000/auditlog:latest
+        image: sam66ish/auditlog-ms:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 6969
