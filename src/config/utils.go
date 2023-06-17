@@ -27,7 +27,7 @@ func init() {
 
 	Address = os.Getenv("ADDRESS")
 	if Address == "" {
-		Address = "localhost:6868"
+		Address = ":6969"
 	}
 
 	isClustered = os.Getenv("IS_CLUSTERED")
