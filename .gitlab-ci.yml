@@ -1,0 +1,25 @@
+# Test CI pipeline
+
+image: golang:latest
+
+stages:
+  - build
+  - test
+
+compile:
+  stage: build
+  script:
+    - cd src
+    - mkdir -p bin
+    - go mod download && go mod tidy
+    - go build -o auditlog.exe
+  artifacts:
+    paths:
+      - src/auditlog.exe
+
+test:
+  stage: test
+  script: 
+    - echo "Deploying auditlog microservice!" 
+    #- src/auditlog.exe 
+  environment: production
