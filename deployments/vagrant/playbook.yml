@@ -1,0 +1,14 @@
+---
+- hosts: all
+  become: true
+
+  tasks:
+    - name: Install Go
+      apt:
+        name: golang
+        state: present
+
+    - name: Install Git
+      apt:
+        name: git
+        state: present
