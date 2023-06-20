@@ -9,6 +9,7 @@ stages:
 compile:
   stage: build
   script:
+  - echo "Building auditlog microservice!" 
     - cd src
     - mkdir -p bin
     - go mod download && go mod tidy
@@ -20,6 +21,5 @@ compile:
 test:
   stage: test
   script: 
-    - echo "Deploying auditlog microservice!" 
-    #- src/auditlog.exe 
-  environment: production
+    - echo "Testing auditlog microservice!" 
+    - go test ./... -v
