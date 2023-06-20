@@ -79,3 +79,10 @@ docker run -p 6969:6969 -it auditlog
 ```
 
 You can then use the same commands given above to test the microservice.
+
+
+# Running Unit Tests
+
+```bash
+go test ./... -v
+```
