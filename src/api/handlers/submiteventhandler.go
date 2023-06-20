@@ -12,6 +12,10 @@ import (
 	"github.com/google/uuid"
 )
 
+var (
+	EventSaverService = services.SaveEvent
+)
+
 // This function handles the submission of an event, decodes the event data, saves the event, and logs
 // any errors or successful saves.
 func SubmitEventHandler(w http.ResponseWriter, r *http.Request) {
@@ -34,7 +38,7 @@ func SubmitEventHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Handler: Received event from service eventID: %s\n", event.EventID)
 	log.Printf("Handler: Decoded event: %v", event)
 
-	err = services.SaveEvent(event)
+	err = EventSaverService(event)
 
 	if err != nil {
 		log.Printf("Handler: Error saving eventID: %s\n %s\n", event.EventID, err)

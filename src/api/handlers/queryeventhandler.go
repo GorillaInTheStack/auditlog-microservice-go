@@ -9,11 +9,21 @@ import (
 	"auditlog/services"
 )
 
+var (
+	GetEventsByKeyValueService = services.GetEventsByKeyValue
+)
+
 // This function retrieves events based on query parameters, stores unique events in a map, converts
 // the map to a slice, encodes the events as JSON, and sends the JSON response.
 func QueryEventHandler(w http.ResponseWriter, r *http.Request) {
 	// Parse the query parameters
 	queryParams := r.URL.Query()
+
+	if len(queryParams) == 0 {
+		http.Error(w, "No filter given", http.StatusBadRequest)
+		log.Println("Handler: No query Params given")
+		return
+	}
 
 	// Create a map to store unique events
 	totalevents := make(map[string]models.Event)
@@ -23,7 +33,7 @@ func QueryEventHandler(w http.ResponseWriter, r *http.Request) {
 		value := values[0]
 
 		// Call the service function to retrieve events
-		events, err := services.GetEventsByKeyValue(key, value)
+		events, err := GetEventsByKeyValueService(key, value)
 
 		if err != nil {
 			// Handle error and send appropriate response
