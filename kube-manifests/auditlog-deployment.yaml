@@ -28,7 +28,7 @@ spec:
         - containerPort: 6969
         env:
         - name: ADDRESS
-          value: "localhost:6969"
+          value: "127.0.0.1:6969"
         - name: JWT_SECRET
           valueFrom:
             secretKeyRef:
