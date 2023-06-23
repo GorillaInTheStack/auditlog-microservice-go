@@ -48,7 +48,7 @@ func TestSubmitEventHandler(t *testing.T) {
 			// Create a test HTTP request with the given request body
 			req, err := http.NewRequest(http.MethodPost, "/events/submit", strings.NewReader(test.requestBody))
 
-			c.Assert(err, qt.IsNil)
+			c.Assert(err, qt.IsNil, qt.Commentf("Handler Test: Error generating request %v", err))
 
 			rr := httptest.NewRecorder()
 
@@ -56,16 +56,16 @@ func TestSubmitEventHandler(t *testing.T) {
 
 			// Check the response status code
 			c.Assert(rr.Code, qt.Equals, test.expectedCode,
-				qt.Commentf("Expected status code %d, got %d", test.expectedCode, rr.Code))
+				qt.Commentf("Handler Test: Expected status code %d, got %d", test.expectedCode, rr.Code))
 
 			// Check the logged message
 			logOutput := rr.Body.String()
 			c.Assert(logOutput, qt.Contains, test.expectedHttpLog,
-				qt.Commentf("Expected http message '%s' not found in http output: %s", test.expectedHttpLog, logOutput))
+				qt.Commentf("Handler Test: Expected http message '%s' not found in http output: %s", test.expectedHttpLog, logOutput))
 		})
 	}
 
-	t.Run("Error while calling saveEvent service", func(t *testing.T) {
+	t.Run("Save Event Service Error", func(t *testing.T) {
 
 		c := qt.New(t)
 
@@ -81,7 +81,7 @@ func TestSubmitEventHandler(t *testing.T) {
 			strings.NewReader(SavingErrorTest.requestBody))
 		rr := httptest.NewRecorder()
 
-		c.Assert(err, qt.IsNil)
+		c.Assert(err, qt.IsNil, qt.Commentf("Handler Test: Error generating request %v", err))
 
 		// Mock event save service error
 		EventSaverService = func(event models.Event) error {
@@ -92,7 +92,7 @@ func TestSubmitEventHandler(t *testing.T) {
 
 		// Check the response status code
 		c.Assert(rr.Code, qt.Equals, SavingErrorTest.expectedCode,
-			qt.Commentf("Expected status code %d, got %d", SavingErrorTest.expectedCode, rr.Code))
+			qt.Commentf("Handler Test: Expected status code %d, got %d", SavingErrorTest.expectedCode, rr.Code))
 
 	})
 }

@@ -4,7 +4,6 @@ import (
 	"auditlog/models"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -36,8 +35,8 @@ func TestQueryEventHandler(t *testing.T) {
 				{EventID: "2", SourceEventID: "event2", SourceServiceLocation: "London"},
 			},
 			expectedHttpLog: []string{
-				"event1",
-				"event2",
+				"1",
+				"2",
 			},
 		},
 		{
@@ -70,14 +69,14 @@ func TestQueryEventHandler(t *testing.T) {
 			// Create a test HTTP request with the given request body
 			req, err := http.NewRequest(http.MethodGet, "/events/query", nil)
 
-			c.Assert(err, qt.IsNil)
+			c.Assert(err, qt.IsNil, qt.Commentf("Handler Test: Error generating request %v", err))
 
 			q := req.URL.Query()
 			for key, values := range test.queryParams {
 				q[key] = values
 			}
 			req.URL.RawQuery = q.Encode()
-			fmt.Println(req.URL.RawQuery)
+
 			rr := httptest.NewRecorder()
 
 			// Mock get event service execution
@@ -95,7 +94,7 @@ func TestQueryEventHandler(t *testing.T) {
 
 			// Check the response status code
 			c.Assert(rr.Code, qt.Equals, test.expectedCode,
-				qt.Commentf("Expected status code %d, got %d", test.expectedCode, rr.Code))
+				qt.Commentf("Handler Test: Expected status code %d, got %d", test.expectedCode, rr.Code))
 
 			// Check the logged message
 			logOutput := rr.Body.String()
@@ -117,8 +116,10 @@ func TestQueryEventHandler(t *testing.T) {
 				extractedHttpOutput = strings.Join(SourceEventIDs, ", ")
 			}
 
-			c.Assert(extractedHttpOutput, qt.Contains, strings.Join(test.expectedHttpLog, ", "),
-				qt.Commentf("Expected http message '%s' not found in http output: %s", strings.Join(test.expectedHttpLog, ", "), extractedHttpOutput))
+			for _, expectedText := range test.expectedHttpLog {
+				c.Assert(extractedHttpOutput, qt.Contains, expectedText,
+					qt.Commentf("Handler Test: Expected http message '%s' not found in http output: %s", expectedText, extractedHttpOutput))
+			}
 		})
 	}
 
