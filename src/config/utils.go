@@ -7,16 +7,16 @@ import (
 )
 
 var (
-	SecretKey   []byte
-	Address     string
-	isClustered string
-	MongodbURI  string
-	IsClustered bool
+	SecretKey      []byte
+	Address        string
+	MongodbURI     string
+	IsClustered    bool
+	TestingEnabled bool
 )
 
 // This function initializes and loads configuration variables from environment variables in a Go
 // application.
-func init() {
+func initialize() {
 
 	secretKeyEnv := os.Getenv("JWT_SECRET")
 	if secretKeyEnv != "" {
@@ -27,10 +27,10 @@ func init() {
 
 	Address = os.Getenv("ADDRESS")
 	if Address == "" {
-		Address = ":6969"
+		Address = "127.0.0.1:6969"
 	}
 
-	isClustered = os.Getenv("IS_CLUSTERED")
+	isClustered := os.Getenv("IS_CLUSTERED")
 	if isClustered != "" {
 		var err error
 		IsClustered, err = strconv.ParseBool(isClustered)
@@ -40,6 +40,18 @@ func init() {
 		}
 	} else {
 		IsClustered = false
+	}
+
+	testingEnabled := os.Getenv("TESTING_ENABLED")
+	if testingEnabled != "" {
+		var err error
+		TestingEnabled, err = strconv.ParseBool(testingEnabled)
+		if err != nil {
+			TestingEnabled = false
+			log.Println("Config: Failed to parse TESTING_ENABLED as boolean, using default value false")
+		}
+	} else {
+		TestingEnabled = false
 	}
 
 	MongoUser := os.Getenv("MONGO_USERNAME")
@@ -55,8 +67,19 @@ func init() {
 
 	// Logging the loaded configuration
 	log.Println("Config: Loaded configuration:")
-	log.Printf("Config:    SecretKey: %s\n", SecretKey)
+	if TestingEnabled {
+		log.Printf("Config:    SecretKey: %s\n", SecretKey)
+	}
 	log.Printf("Config:    Address: %s\n", Address)
 	log.Printf("Config:    IsClustered: %v\n", IsClustered)
+	log.Printf("Config:    TestingEnabled: %v\n", TestingEnabled)
 	log.Printf("Config:    MongodbURI: %s\n", MongodbURI)
+}
+
+func init() {
+	initialize()
+}
+
+func Reset() {
+	initialize()
 }
