@@ -1,0 +1,43 @@
+pipeline {
+    agent any 
+    tools { go 'golang-1.20' }
+    
+    stages{
+        stage("build"){
+            when{
+                changeset "**/src/**"
+            }
+            steps{
+                echo 'Building auditlog microservice'
+                dir('src'){
+                    sh 'go mod download && go mod tidy'
+                    sh 'go build -o auditlog.exe'
+                }
+            }
+        }
+        stage("test"){
+            when{
+                changeset "**/src/**"
+            }
+            steps{
+                echo 'Testing the auditlog microservice'
+                dir('src'){
+                    sh 'go test ./... -v'
+                }
+            }
+        }
+        //stage("package"){
+        //    steps{
+        //        echo 'step 3'
+        //        dir('src'){
+        //            sh 'docker build -t sam66ish/auditlog-ms .'
+        //        }
+        //    }
+        //}
+    } 
+    post{
+      always{
+          echo 'The auditlog microservice pipeline is completed.'
+      }
+    }
+}
